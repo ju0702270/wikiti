@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorator="template">
+<head>
+    <meta charset="utf-8">
+    <title th:text="#{label.login}"></title>
+</head>
+<body>
+<div layout:fragment="contenu">
+    <div class="container-lg mt-1">
+        <div class="row justify-content-center">
+            <!-- Formulaire -->
+            <form id="loginForm" th:action="${changePass}? @{effectiveChangePass} : @{login}" method="post" class="col-md-7 m-3 bg-dark text-center text-light">
+                <h4 class="mt-2" th:if="${isResetPass}" th:text="#{label.needChangePass}"></h4>
+                <div class="row m-3 pt-4">
+                    <div class="col-md-4 text-left">
+                        <label for="email" class="form-label" th:text="#{user.mail}"></label>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- input email-->
+                        <div id="usernameInput" class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fa fa-envelope-open"></i>
+                                </div>
+                            </div>
+                            <input type="email" id="email" name="username" class="form-control"
+                                required="required" th:value="(${currentUser} != null)? ${currentUser.mail} : ''">
+                            <div class="invalid-feedback text-left"></div>
+                        </div>
+                        <!-- fin input email-->
+                    </div>
+                </div>
+                <div  class="row m-3 pt-3">
+                    <div class="col-md-4 text-left">
+                        <label for="passwd" class="form-label" th:text="${changePass}? #{label.oldPassword} : #{label.password}"></label>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- input Password -->
+                        <div id="passwordInput" class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                            </div>
+                            <input type="password" id="passwd" th:name="${changePass}? 'oldPassword' : 'password'" class="form-control">
+                            <div class="invalid-feedback text-left"></div>
+                        </div>
+                        <!-- fin input password-->
+                    </div>
+                </div>
+                <div  th:if="${changePass}" class="row m-3 pt-3">
+                    <div class="col-md-4 text-left">
+                        <label for="passwdnew" class="form-label" th:text="#{label.newPassword}"></label>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- input newPassword-->
+                        <div id="newPasswordInput" class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                            </div>
+                            <input type="password" id="passwdnew" name="newPassword" class="form-control">
+                            <div class="invalid-feedback text-left"></div>
+                        </div>
+                        <!-- fin input newPassword-->
+                    </div>
+                </div>
+                <div  th:if="${changePass}" class="row m-3 pt-3">
+                    <div class="col-md-4 text-left">
+                        <label for="passwdconfirm" class="form-label" th:text="#{label.confirmPassword}"></label>
+                    </div>
+                    <div class="col-md-8">
+                        <!-- input confirmPassword -->
+                        <div id="confirmPasswordInput" class="input-group">
+                            <div class="input-group-prepend">
+                                <div class="input-group-text">
+                                    <i class="fa fa-key"></i>
+                                </div>
+                            </div>
+                            <input type="password" id="passwdcomfirm" name="confirmPassword" class="form-control">
+                            <div class="invalid-feedback text-left"></div>
+                        </div>
+                        <!-- fin input confirmPassword-->
+                    </div>
+                </div>
+                <div class="m-2 pt-2 pb-4 py-4">
+                    <button type="button" class="btn btn-outline-light btn-lg btn-block"
+                    onclick="loginOrChangePass()" th:text="#{label.login}"></button>
+                </div>
+                <div id="changePassSuccess" class="alert alert-success mb-2 mx-2" role="alert" hidden></div>
+            </form>
+        </div>
+        
+    </div>
+</div>
+</body>
+</html>

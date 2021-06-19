@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html th:lang="#{locale.language}"
+      th:xmllang="#{locale.language}"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:sec=https://www.thymeleaf.org/thymeleaf-extras-springsecurity5>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0, shrink-to-fit=no">
+    <meta name="robots" content="index, nofollow, noarchive">
+    <meta name="author" content="Rochez Justin">
+    <meta name="description" content="Tactical intranet documentation manager">
+    <meta th:name="_csrf" th:content="${_csrf.token}"/>
+    <meta th:name="_csrf_header" th:content="${_csrf.headerName}"/>
+    <title>WikiTI</title>
+    <link rel="apple-touch-icon" sizes="76x76" th:href="@{/images/favicon/apple-touch-icon.png}">
+    <link rel="icon" type="image/png" sizes="32x32"  th:href="@{/images/favicon/favicon-32x32.png}">
+    <link rel="icon" type="image/png" sizes="16x16"  th:href="@{/images/favicon/favicon-16x16.png}">
+    <link rel="manifest"  th:href="@{/images/favicon/site.webmanifest}">
+    <link rel="mask-icon"  th:href="@{/images/favicon/safari-pinned-tab.svg}" color="#5bbad5">
+    <meta name="msapplication-TileColor" content="#da532c">
+    <meta name="theme-color" content="#ffffff">
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/4.6.0/css/bootstrap.min.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootstrap-side-modals.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/webjars/font-awesome/5.15.2/css/all.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/bootsrap-custom.css}" />
+    <link rel="stylesheet" type="text/css" th:href="@{/css/TIstyle.css}" />
+</head>
+<body>
+<header>
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg bg-dark navbar-dark justify-content-md-between">
+        <div class="container-fluid mx-4">
+            <a href="/index"><img th:src="@{/images/TIlogoFull.png}" th:alt="#{logo.TI}"/></a>
+            <button class="navbar-toggler" type="button" data-toggle="dropdown" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent"  aria-label="Toggle navigation" aria-expanded="false">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-md-between" id="navbarSupportedContent">
+                <div>
+                    <ul class="navbar-nav me-auto">
+                        <li class="nav-item ml-2 text-lg-left">
+                            <h1><a class="text-light mb-n2" aria-current="page" href="/index">Wiki-TI</a></h1>
+                            <h3 class="text-light wiki-hidden">Tactical Intranet documentation manager</h3>
+                        </li>
+                    </ul>
+                </div>
+                <div class="text-right">
+                    <p sec:authorize="isAuthenticated()" class="text-light text-lg-right text-center">
+                        <span th:text="#{label.connected-as}"></span>&nbsp;:<br/>
+                        <span sec:authorize="isAuthenticated()" sec:authentication="name"></span>
+                    </p>
+                    <div class="dropdown">
+                        <div class="btn-group">
+                            <a class="btn btn-outline-light"
+                               sec:authorize="!isAuthenticated()"
+                               type="button" th:text="#{label.login}"
+                               href="/login">
+                            </a>
+                            <a class="btn btn-outline-light"
+                               sec:authorize="isAuthenticated()"
+                               type="button" th:text="#{label.logout}"
+                               href="/logout">
+                            </a>
+                            <button class="btn btn-outline-light dropdown-toggle dropdown-toggle-split"
+                                    type="button"
+                                    id="dropdownMenuButton"
+                                    data-toggle="dropdown">
+                            </button>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <!-- accès aux documentations de l'utilisateur courant -->
+                                <a sec:authorize="isAuthenticated()" class="dropdown-item" href="/utilisateur" th:text="#{user.mesdoc}"></a>
+                                <a sec:authorize="isAuthenticated()" class="dropdown-item" href="/auth/docCreation" th:text="#{label.docCreation}"></a>
+                                <a sec:authorize="isAuthenticated()" class="dropdown-item" href="/changePass" th:text="#{label.changePass}"></a>
+                                <div sec:authorize="hasRole('ADMIN')" class="dropdown-divider"></div>
+                                <a sec:authorize="hasRole('ADMIN')" class="dropdown-item" href="/admin/usermanage" th:text="#{usermanager.title}"></a>
+                                <a sec:authorize="hasRole('ADMIN')" class="dropdown-item" href="/admin/docManager" th:text="#{label.docManager}"></a>
+                                <div sec:authorize="isAuthenticated()" class="dropdown-divider"></div>
+                                <a class="dropdown-item" data-toggle="modal" data-target="#modalAbout">Contact</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+</header>
+<main>
+    <!-- affichage du loader-->
+    <div id="loadercontent"></div>
+    <!-- affichage du contenu -->
+    <section layout:fragment="contenu"></section>
+    
+</main>
+<footer class="footer container-fluid bg-dark text-center text-lg-start">
+    <div class="row text-center justify-content-rounded">
+        <div class="col-md-8 text-light">
+            <img th:src="@{/images/logo-defense.png}" style="width: 60px;" alt="logo of belgian defense"/>
+            © 2021 Copyright:
+            <a href="#">CCV&C OPSC3-TI</a>
+        </div>
+        <div class="col-md-4">
+            <a href="javascript:lang('fr');">fr</a>
+            <a href="javascript:lang('en');">en</a>
+            <a href="javascript:lang('nl');">nl</a>
+        </div>
+    </div>
+</footer>
+<!-- Modal -->
+<div class="modal fade" id="modalAbout" tabindex="-1" role="dialog" aria-labelledby="modalAboutTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle">Modal title</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                ...
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary">Save changes</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal-right xs fade" id="infoModal" tabindex="-1" role="dialog" aria-labelledby="top_modal">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+      <div class="modal-content h-auto rounded-left">
+        <div class="modal-header">
+          <h5 class="modal-title" id="titleInfo"></h5>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+          </button>
+        </div>
+        <div class="modal-body text-center">
+          <p id="textInfo"></p>
+        </div>
+      </div>
+    </div>
+</div>
+
+
+<script type="text/javascript" th:src="@{/webjars/jquery/3.5.1/jquery.min.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/jquery-validation/1.19.3/jquery.validate.js}"></script>
+<script type="text/javascript" th:src="@{/webjars/bootstrap/4.6.0/js/bootstrap.min.js}"></script>
+<script type="text/javascript" th:src="@{/js/ckeditor5_wikiTI/build/ckeditor.js}"></script>
+<script th:inline="javascript" type="text/javascript">
+/*<![CDATA[*/
+
+/* Ajout des token csrf pour le JSON*/
+var token = $("meta[name='_csrf']").attr("content");
+var header = $("meta[name='_csrf_header']").attr("content");
+$(document).ajaxSend(function(e, xhr, options) {
+    xhr.setRequestHeader(header, token);
+});
+
+/**
+ * fonction d'affichage d'un spinner de chargement
+ */ 
+function loader(){
+    $('#loadercontent').addClass('loading'); 
+}
+/**
+ * fonction de retrait de l'affiche d'un spinner de chargement
+ */ 
+function unloader(){
+    $('#loadercontent').removeClass('loading'); 
+}
+
+/**
+ * fonction de changement de langue dans l'url, fonction mise en place pour eviter les erreurs dans les pages /searchDoc et /searchAdvanced
+ */
+function lang(lang){
+    //TODO changer la langue directement dans le pathname pour une application plus robuste
+    if (window.location.pathname == "/searchDoc" || window.location.pathname == "/searchAdvanced" ||
+     window.location.pathname == '/admin/searchDocManager' || window.location.pathname == "/admin/searchAdvancedDocManger"){
+        if (window.location.toString().search('&lang=') > 0){
+            window.location.href = (window.location.toString() + window.location.search).substring( 0, window.location.toString().search('&lang=')) +'&lang='+lang; 
+        }else{
+            window.location.href = window.location.toString().replace(window.location.search,window.location.search +'&lang='+lang); 
+        }
+    }else{
+        window.location.href = window.location.toString().substring( 0, window.location.toString().search('&lang=')) +'?lang='+lang;
+    }
+}//fin lang
+
+/**
+ * Fonction d'affichage d'information de succès ou d'erreur.
+ * Cette fonction est général à l'application entière
+ * params String txt: le text HTML à afficher
+ *        Boolean error: si il s'agit d'un message d'erreur alors mettre true
+ */ 
+function showInfo(txt, error=false){
+    if (error){
+        $("#titleInfo").html('<i class=" text-danger fas fa-exclamation-circle"></i> &nbsp; Error');
+    }else{
+        $("#titleInfo").html('<i class="text-success fas fa-check-circle"></i> &nbsp; Success');
+    }
+    $("#textInfo").html(txt);
+    $("#infoModal").modal("show");
+}
+/**
+ * fonction pour fermer la fenetre d'affichage de l'information
+ * Cette fonction est général à l'application entière
+ */ 
+function closeInfo(){
+    $("#infoModal").modal("hide");
+}
+
+
+/**
+ * Fonction de retrait des message de validation d'un formulaire
+ * ainsi que le contenu des inputs
+ */
+function clearValidation(form){
+    form.reset();//reset du formulaire
+    $(form).find("label.error").each(function(){
+        this.remove(); //retrait des messages d'erreur (JQuery validator)
+    });
+}
+
+/**
+ * Fonction d'ouverture de la fenetre modal saveUtilisateurForm
+ * cette fonction previens le server que l'utilisateur veux créer un nouvel utilisateur
+ */
+function openForNewUser(){
+    $("#saveUtilisateurForm").load("/admin/ajouterUtilisateur", function(response, status, xhr){
+        $("#updateModal").find(".modal-title").text(/*[[#{user.add}]]*/);
+        $("#updateModal").modal("show");
+      
+    });
+};
+/**
+ * Fonction d'ouverture de la fenetre modal saveUtilisateurForm
+ * cette fonction previens le server que l'utilisateur veux modifier un utilisateur
+ */
+function openForUpdateUser(matricule){
+    $("#saveUtilisateurForm").load("/admin/modifierUtilisateur?matricule="+matricule, function(response, status, xhr){
+        $("#updateModal").find(".modal-title").text(/*[[#{user.update}]]*/);
+        $("#updateModal").modal("show");
+    });
+};
+
+/**
+ * Fonction de suppression d'un utilisateur
+ * cette fonction demande une confirmation front-end afin d'être certain de l'action
+ * cette fonction envoi ensuite sur le server l'id de l'utilisateur à modifier
+ */ 
+function supprimerUtilisateur(){
+    if (confirm(/*[[|#{label.confirm-delete} #{label.user} ?|]]*/))
+        $('.supprimerUtilisateur').submit(function(e){
+            e.preventDefault();
+            loader();
+            let value= $(this).find("[name='id']").attr("value"); // valeur de l'id utilisateur
+            $.post('/admin/supprimerUtilisateur', {id: value}, function(response, status){
+                showInfo(response);
+            }).fail(function(xhr){
+                showInfo(xhr.responseText);
+            }).done(function(){
+                unloader();
+                //refresh async du tableau de gestion des utilisateurs
+                let page = $('#paginationUser').find(".page-item.active").children().text();
+                let size= $("#size_tbodyUserManager").val();
+                $("#tbodyUserManager").load("/admin/refreshUser?page="+page+"&size="+size);
+            
+            });
+        });
+}
+
+/**
+ * Fonction de login à l'application ou de changement de mot de passe
+ * selon l'état du formulaire cette fonction permet d'envoyer les informations en back-end et de récuperer les erreurs s'il y en as
+ */ 
+function loginOrChangePass(){
+    let $form = $('#loginForm');
+    let formAction = $form.attr("action");
+    let data ={};
+    let $input_group = $form.find('.input-group');
+
+    $form.serializeArray().forEach(d => {
+        data[d.name]= d.value;
+    }); 
+    //Remise à zero des erreurs sur le formulaires
+    $input_group.removeClass('has-danger');
+    $input_group.children('input').removeClass('is-invalid');
+    $input_group.children('.invalid-feedback').text('');
+    $input_group.children('.invalid-feedback').empty();
+    $('#changePassSuccess').text('').attr('hidden',true);
+
+    if (formAction == 'login'){
+        $.post("/login",data,
+        function(){ // redirection sur index si succes
+            window.location.href = '/';
+        }).fail(function(response, status){ //récupération et affichage des erreurs
+            let input = $('#usernameInput').removeClass('has-danger').addClass('has-danger');
+            input.children('input').removeClass('is-invalid').addClass('is-invalid');
+            let pass = $('#passwordInput').removeClass('has-danger').addClass('has-danger');
+            pass.children('input').removeClass('is-invalid').addClass('is-invalid');
+        })
+    }else if (formAction == 'effectiveChangePass'){
+        $.post('/effectiveChangePass',data, 
+        function(response, status){
+            if (response.hasOwnProperty('success')){
+                $('#changePassSuccess').text(response['success']).removeAttr('hidden');
+                setTimeout(function(){
+                    window.location.href = '/';
+                },1500);
+            }
+        }).fail(function(response,status){ //récupération et affichage des erreurs
+            let json = response.responseJSON;
+            if(json.hasOwnProperty('usernameError')){
+                let input = $('#usernameInput').removeClass('has-danger').addClass('has-danger');
+                input.children('input').removeClass('is-invalid').addClass('is-invalid');
+                input.children('.invalid-feedback').text(json['usernameError']);
+            }else if ( json.hasOwnProperty('oldPasswordError') ){
+                let input = $('#passwordInput').removeClass('has-danger').addClass('has-danger');
+                input.children('input').removeClass('is-invalid').addClass('is-invalid');
+                input.children('.invalid-feedback').text(json['oldPasswordError']);
+            }
+            if (json.hasOwnProperty('sameOldAndNewPasswordError')){
+                let input = $('#newPasswordInput').removeClass('has-danger').addClass('has-danger');
+                input.children('input').removeClass('is-invalid').addClass('is-invalid');
+                input.children('.invalid-feedback').text(json['sameOldAndNewPasswordError']);
+            }
+            if (json.hasOwnProperty('confirmPasswordError')){
+                let input = $('#confirmPasswordInput').removeClass('has-danger').addClass('has-danger');
+                input.children('input').removeClass('is-invalid').addClass('is-invalid');
+                input.children('.invalid-feedback').text(json['confirmPasswordError']);
+            }
+            if (json.hasOwnProperty('newPasswordErrorValidation')){
+                let input = $('#newPasswordInput').removeClass('has-danger').addClass('has-danger');
+                input.children('input').removeClass('is-invalid').addClass('is-invalid');
+                input.children('.invalid-feedback').append('<span>'+json['newPasswordErrorValidation']+'</span>');
+            }
+
+        });
+    }
+}
+
+
+/**
+ * Fonction de sauvegrade d'un utilisateur en ajax
+ * cette fonction doit être appelée par la méthode onclick directement dans la balise html du bouton de soumission. 
+ * Le bouton submit ne doit pas être de type submit afin d'éviter l'envoi du formulaire par la méthode synchrone.
+ * Cette fonction va récuperer les données du formulaire saveUtilisateurForm pour faire une requete ajax
+ * refresh du tableau des utilisateurs + affichage de messages d'erreurs  
+ */
+function saveUtilisateur(){
+    let data= {};
+    let formulaire= $('#saveUtilisateurForm');
+    if( formulaire.valid() ){//si le formulaire est valide front-end (utilisation de méthode un peu détournée car le bouton de validtation du formulaire ne peut pas être de type submit)
+        loader();
+        //sérialisation des données
+        formulaire.serializeArray().forEach(d => {
+            data[d.name]= d.value;
+        });
+        data['resetPass'] =$('#resetPassInput').is(":checked");
+        $.ajax({
+            type : 'POST',
+            url : '/admin/saveUtilisateur',
+            data : JSON.stringify(data),
+            contentType : 'application/json',
+            success : function(result) {
+                showInfo(result);
+                $("#updateModal").modal("hide");
+            },
+            error : function(xhr){
+                showInfo(xhr.responseText, true);
+            },
+            complete: function(){
+                unloader();
+                //refresh async du tableau de gestion des utilisateurs
+                let page = $('#paginationUser').find(".page-item.active").children().text();
+                let size= $("#size_tbodyUserManager").val();
+                $("#tbodyUserManager").load("/admin/refreshUser?page="+page+"&size="+size);
+            }
+        });  
+    }else{
+        //couche design en cas de formulaire invalide
+        formulaire.addClass("nope-anim");
+        setTimeout(function(){
+            formulaire.removeClass("nope-anim")}
+            ,400);
+    }
+}
+
+
+
+
+
+$( document ).ready(function() {
+
+    //ajout d'une méthode exactlength pour JQuery validator. 
+    //cette fonction permet de vérifier si l'utilisateur à entré le nombre exact de chaine de caractère. Sinon invalide
+    $.validator.addMethod("exactlength", function(value, element, param) {
+        return this.optional(element) || value.length == param;
+    }, $.validator.format("Please enter exactly {0} characters."));
+
+    /**
+     * En cas de soumission du formulaire de recherche des utilisateur dans la gestion des utilisateur
+     */ 
+    $("#searchUtilisateurForm").submit(function(e){
+        loader();
+        e.preventDefault();
+        let $input = $(this).find("input");
+        let page = $('#paginationUser').find(".page-item.active").children().text();
+        let size= $("#size_tbodyUserManager").val();
+        $("#tbodyUserManager").load("/admin/searchUtilisateur?searchValue="+$input.val()+"&page="+page+"&size="+size, function(response, status, xhr){
+            unloader();
+        });
+
+    })
+
+
+
+
+    /**
+     * Les éléments ayant la classe resetButton et se trouvant dans un formulaire peuvent au click faire un reset du formulaire
+     */
+    $(".resetButton").click(function(){
+        clearValidation(this.form);
+    });
+
+    /**
+     * validation de saveUtilisateurForm
+     */
+    $('#saveUtilisateurForm').validate({
+        rules:{
+            matricule:{
+                required:true,
+                exactlength:7,
+                digits: true
+            },
+            nom:{
+                required:true,
+                minlength:2,
+            },
+            prenom:{
+                required:true,
+                minlength:2,
+            },
+            mail:{
+                required: true, 
+                email:true
+            }
+        },
+        messages:{
+            matricule:{
+                required:/*[[#{validation.required}]]*/+"",
+                exactlength:/*[+[[#{validation.length}]]+' 7'+]*/+"",
+                digits: /*[[#{validation.onlydigits}]]*/+""
+            },
+            nom:{
+                required:/*[[#{validation.required}]]*/+"",
+                minlength:/*[+[[#{validation.minlength}]]+' 2'+]*/+"",
+            },
+            prenom:{
+                required:/*[[#{validation.required}]]*/+"",
+                minlength:/*[+[[#{validation.minlength}]]+' 2'+]*/+"",
+            },
+            mail:{
+                required: /*[[#{validation.required}]]*/+"", 
+                email:/*[[#{validation.email}]]*/+""
+            }
+        }
+    });
+
+    /* Ajout d'une catégorie dans la création ou modification de documentation */
+    $('.addCategorie').click(function(){
+        let form = $('#formDocCreation');
+        form.attr('action','/auth/addCategorie').submit();
+    });
+
+    /* retrait d'une catégorie dans la création ou modification de documentation */
+    $('.minusCategorie').click(function(){
+        let form = $('#formDocCreation');
+        form.attr('action','/auth/minusCategorie').submit();
+    });
+
+
+    /* Ajout d'une SectionContenu dans la création ou modification de documentation */
+    $('.addSection').click(function(){
+        let form = $('#formDocCreation');
+        form.attr('action','/auth/addSection').submit();
+    });
+    /* Ajout d'une SectionContenu dans la création ou modification de documentation */
+    $('.minusSection').click(function(){
+        let form = $('#formDocCreation');
+        form.attr('action','/auth/minusSection').submit();
+    });
+    
+    /*définition des règles CkEditor*/ 
+    $('.ckeditorTextArea').each(function(){
+        ClassicEditor.create( this,{
+            removePlugins: [ 'Title' ],
+            toolbar: {
+                items: [
+                    'heading',
+                    '|',
+                    'bold',
+                    'italic',
+                    'underline',
+                    'fontColor',
+                    'highlight',
+                    '|',
+                    'bulletedList',
+                    'numberedList',
+                    'todoList',
+                    '|',
+                    'alignment',
+                    'outdent',
+                    'indent',
+                    '|',
+                    'imageInsert',
+                    'blockQuote',
+                    'insertTable',
+                    '|',
+                    'code',
+                    'codeBlock',
+                    'htmlEmbed',
+                    '|',
+                    'fontSize',
+                    'fontFamily',
+                    'link',
+                    'undo',
+                    'redo'
+                ]
+            },
+            image: {
+                toolbar: [
+                    'imageStyle:full',
+                    'imageStyle:side',
+                    '|',
+                    'resizeImage',
+                    '|',
+                    'imageTextAlternative',
+                    '|',
+                    'linkImage'
+                ]
+            },
+            table: {
+                contentToolbar: [
+                    'tableColumn',
+                    'tableRow',
+                    'mergeTableCells',
+                    'tableCellProperties',
+                    'tableProperties'
+                ]
+            },
+            licenseKey: '',
+            ckfinder: {
+                // Upload the images to the server using the CKFinder QuickUpload command.
+                uploadUrl: '/auth/upload_ckeditor',
+                
+                options: {
+                    resourceType: 'Images',
+                }
+            }
+        } )
+    });
+    /* Si il y a recherche dans le gestionnaire de documentation */
+    $("#searchDocumentationManagerForm").submit(function(e){
+        console.log('searchDocumentationManagerForm')
+        e.preventDefault();
+        let $input = $(this).find("input");
+        let page = $('#paginationDocManager').find(".page-item.active").children().text();
+        let size= $("#sizeDocManager").val();
+        window.location.assign('/admin/searchDocManager?searchValueDocManager='+$input.val()+'&page='+page+'&size='+size);
+    }); 
+    /* Si il y a recherche avancée dans le gestionnaire de documentation */
+    $("#searchAdvancedDocumentationManagerForm").submit(function(e){
+        e.preventDefault();
+        let data =$(this).serialize();
+        let page = $('#paginationSearchDoc').find(".page-item.active").children().text();
+        let size= $("#sizeDocManager").val();
+        window.location.assign("/admin/searchAdvancedDocManger?"+data+"&page="+page+"&size="+size);  
+    }); 
+
+    /**
+     * Méthode 'envoi du formulaire, cette méthode est utilisée afin de pouvoir gérer la pagination
+     */
+    $("#searchDocumentationForm").submit(function(e){
+        e.preventDefault();
+        let $input = $(this).find("input");
+        let page = $('#paginationSearchDoc').find(".page-item.active").children().text();
+        window.location.assign("/searchDoc?searchValueDoc="+$input.val()+"&page="+page);
+    }); 
+
+
+
+    /**
+     * Méthode 'envoi du formulaire, cette méthode est utilisée afin de pouvoir gérer la pagination
+     */ 
+    $("#searchAdvancedDocumentationForm").submit(function(e){
+        e.preventDefault();
+        let data =$(this).serialize();
+        let page = $('#paginationSearchDoc').find(".page-item.active").children().text();
+        window.location.assign("/searchAdvanced?"+data+"&page="+page);  
+    }); 
+
+
+});
+/*]]>*/
+</script>
+</body>
+</html>
