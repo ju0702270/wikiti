@@ -10,13 +10,11 @@
 	</parent>
 	<groupId>com.rochez</groupId>
 	<artifactId>wiki-TI</artifactId>
-	<packaging>jar</packaging>
 	<version>0.0.1-SNAPSHOT</version>
 	<name>wiki-TI</name>
 	<description>Projet de gestionnaire de documentation</description>
 	<properties>
 		<java.version>16</java.version>
-		<start-class>com.rochez.wikiTI.WikiTiApplication</start-class>
 	</properties>
 
 	<dependencies>
@@ -157,29 +155,8 @@
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
 					<source>15</source>
+					<target>15</target>
 				</configuration>
-			</plugin>
-			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>com.rochez.wikiTI.WikiTiApplication</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-				</configuration>
-				<executions>
-					<execution>
-						<id>make-assembly</id>
-						<phase>package</phase>
-						<goals>
-							<goal>single</goal>
-						</goals>
-					</execution>
-				</executions>
 			</plugin>
 		</plugins>
 	</build>
