@@ -26,7 +26,7 @@ instanceKlass org/codehaus/groovy/runtime/callsite/BooleanReturningMethodInvoker
 instanceKlass org/codehaus/groovy/runtime/metaclass/ClosureMetaClass$2
 instanceKlass org/codehaus/groovy/runtime/metaclass/ClosureMetaClass$MethodChooser
 instanceKlass org/codehaus/groovy/runtime/callsite/BooleanClosureWrapper
-instanceKlass org/thymeleaf/engine/TemplateFlowController
+instanceKlass org/thymeleaf/engine/TemplateFlowController 
 instanceKlass org/thymeleaf/engine/ThrottledTemplateProcessor
 instanceKlass org/codehaus/groovy/runtime/metaclass/DefaultMetaClassInfo$ConstantMetaClassVersioning
 instanceKlass org/codehaus/groovy/runtime/metaclass/DefaultMetaClassInfo
